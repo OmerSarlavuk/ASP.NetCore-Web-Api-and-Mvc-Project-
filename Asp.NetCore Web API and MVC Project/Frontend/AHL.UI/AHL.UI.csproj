@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\admin\AdminImages\engin.jpg" />
+    <Content Remove="wwwroot\admin\AdminImages\omer.jpg" />
+    <Content Remove="wwwroot\admin\ProvinceImages\Agri.jpg" />
+    <Content Remove="wwwroot\admin\ProvinceImages\Ankara.jpg" />
+    <Content Remove="wwwroot\admin\ProvinceImages\Bursa.jpg" />
+    <Content Remove="wwwroot\admin\ProvinceImages\Erzurum.jpg" />
+    <Content Remove="wwwroot\admin\ProvinceImages\Istanbul.jpg" />
+    <Content Remove="wwwroot\admin\ProvinceImages\Izmir.jpg" />
+    <Content Remove="wwwroot\admin\ProvinceImages\KahramanMaras.jpg" />
+    <Content Remove="wwwroot\admin\ProvinceImages\Kars.jpg" />
+    <Content Remove="wwwroot\admin\ProvinceImages\Kirsehir.jpg" />
+    <Content Remove="wwwroot\admin\ProvinceImages\Nevsehir.jpg" />
+    <Content Remove="wwwroot\admin\ProvinceImages\Sivas.jpg" />
+    <Content Remove="wwwroot\admin\ProvinceImages\Yozgat.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\admin\AdminImages\engin.jpg" />
+    <None Include="wwwroot\admin\AdminImages\omer.jpg" />
+    <None Include="wwwroot\admin\ProvinceImages\Agri.jpg" />
+    <None Include="wwwroot\admin\ProvinceImages\Ankara.jpg" />
+    <None Include="wwwroot\admin\ProvinceImages\Bursa.jpg" />
+    <None Include="wwwroot\admin\ProvinceImages\Erzurum.jpg" />
+    <None Include="wwwroot\admin\ProvinceImages\Istanbul.jpg" />
+    <None Include="wwwroot\admin\ProvinceImages\Izmir.jpg" />
+    <None Include="wwwroot\admin\ProvinceImages\KahramanMaras.jpg" />
+    <None Include="wwwroot\admin\ProvinceImages\Kars.jpg" />
+    <None Include="wwwroot\admin\ProvinceImages\Kirsehir.jpg" />
+    <None Include="wwwroot\admin\ProvinceImages\Nevsehir.jpg" />
+    <None Include="wwwroot\admin\ProvinceImages\Sivas.jpg" />
+    <None Include="wwwroot\admin\ProvinceImages\Yozgat.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
+  </ItemGroup>
+
+</Project>

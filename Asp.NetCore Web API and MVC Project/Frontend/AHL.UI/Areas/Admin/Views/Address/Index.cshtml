@@ -1,0 +1,92 @@
+﻿@using AHL.UI.Areas.Admin.Models
+@model List<AddressItem>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section customStyles{
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="~/admin/plugins/sweetalert2/sweetalert2.css" />
+}
+@section customScripts
+    {
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.24/i18n/Turkish.json"></script>
+    <script>
+        $(document).ready(function () {
+            $('#addressTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Turkish.json"
+                }
+            }); 
+        });
+    </script>
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex p-0">
+                <h3 class="card-title p-3"><strong>Adres Bilgileri</strong></h3>
+                <ul class="nav nav-pills ml-auto p-2">
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab_1">
+                        <table id="addressTable" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Öğrenci Adı</th>
+                                    <th>Öğrenci Soyadı</th>
+                                    <th>Şehir Adı</th>
+                                    <th>Açıklama Bilgisi</th>
+                                    <th>Adres Detayı</th>
+                                    <th>Aktif</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.studentfirstName</td>
+                                        <td>@item.studentlastName</td>
+                                        <td>@item.ProvinceName</td>
+                                        <td>@item.DistrictName</td>
+                                        <td>@item.AddressDetail</td>
+                                        <td>
+                                            @if (item.IsActive == true)
+                                            {
+                                                <span>Aktif</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Değil</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Öğrenci Adı</th>
+                                    <th>Öğrenci Soyadı</th>
+                                    <th>Şehir Adı</th>
+                                    <th>Açıklama Bilgisi</th>
+                                    <th>Adres Detayı</th>
+                                    <th>Aktif</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

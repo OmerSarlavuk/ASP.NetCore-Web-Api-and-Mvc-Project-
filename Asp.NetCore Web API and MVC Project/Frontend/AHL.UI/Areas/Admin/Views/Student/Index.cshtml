@@ -1,0 +1,373 @@
+﻿@using AHL.UI.Areas.Admin.Models
+@model List<StudentItem>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section customStyles{
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="~/admin/plugins/sweetalert2/sweetalert2.css" />
+}
+@section customScripts
+    {
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.24/i18n/Turkish.json"></script>
+    <script src="~/admin/plugins/sweetalert2/sweetalert2.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            $('#example').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Turkish.json"
+                }
+            });
+
+            $("#btnSave").click(function () {
+
+                var formData =
+                {
+                    FirstName: $("#txtFirstName").val(),
+                    LastName: $("#txtLastName").val(),
+                    SchoolIdentity: $("#txtIdentity").val(),
+                    Email: $("#txtGmail").val(),
+                    Phone: $("#txtPhone").val(),
+                    Gender: $("#genderSelect").val(),
+                    IsActive: $("#activeSelect").val()
+                }
+
+                $.ajax({
+                    url: "/Admin/Student/Save",
+                    method: "post",
+                    datatype: "json",
+                    data: formData,
+
+                    success: function (response) {
+
+                        if (response.isSuccess) {
+                            Swal.fire
+                                (
+                                    'Kayıt İşlemi Başarılı',
+                                    response.message,
+                                    'success'
+                                )
+
+                            $("a[href='#tab_2']").removeClass("active");
+                            $("a[href='#tab_1']").addClass("active");
+                            $("#tab_2").removeClass("active");
+                            $("#tab_1").addClass("active");
+
+                        }//if
+                        else {
+                            Swal.fire
+                                (
+                                    'Kayıt İşlemi Başarısız!',
+                                    response.message,
+                                    'error'
+                                )
+                        }//else
+                    },//success
+                });//ajax
+            });//btnSave
+
+            $(".btnDelete").click(function () {
+
+                var studentId = $(this).attr("studentid");
+
+                Swal.fire({
+                    title: 'Emin misiniz?',
+                    text: "Silme işlemi geri alınamaz!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sil!',
+                    cancelButtonText: 'Vazgeç!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        $.ajax({
+                            url: "/Admin/Student/Delete/" + studentId,
+                            method: "post",
+                            datatype: "json",
+                            success: function (response) {
+                                if (response.isSuccess) {
+                                    Swal.fire('İşlem Başarılı', response.message, 'success')
+                                }
+                                else {
+                                    var errors = "";
+                                    for (var i = 0; i < response.errorMessages.length; i++) {
+                                        errors += response.errorMessages[i] + "<br />";
+                                    }
+
+                                    Swal.fire('İşlem Başarısız', response.message + "<br />" + errors, 'error')
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire('İşlem İptal Edildi', '', 'info')
+                    }
+                })
+            });//btnDelete
+
+
+            $(".btnEdit").click(function () {
+                var studentId = $(this).attr("studentid");
+                $.ajax({
+                    url: "/Admin/Student/GetStudent/" + studentId,
+                    method: "get",
+                    dataType: "json",
+                    success: function (response) {
+                        $("#txtFirstNameEdit").val(response.firstName);
+                        $("#txtLastNameEdit").val(response.lastName);
+                        $("#txtIdentityEdit").val(response.schoolIdentity);
+                        $("#txtGmailEdit").val(response.email);
+                        $("#txtPhoneEdit").val(response.phone);
+                        $("#hfStudentId").val(studentId);
+                        $("#exampleModal").modal("show");
+                    },
+                    error: function (error) {
+                        Swal.fire('İşlem Başarısız', response.message + "<br />" + errors, 'error')
+                    }
+                });
+                // Güncelleme Butonu Tıklama Olayı
+                $("#btnEdit").click(function () {
+                    // Öğrenci bilgilerini al
+                    var studentId = $("#hfStudentId").val();
+                    var formData = {
+                        Id: studentId,
+                        FirstName: $("#txtFirstNameEdit").val(),
+                        LastName: $("#txtLastNameEdit").val(),
+                        SchoolIdentity: $("#txtIdentityEdit").val(),
+                        Email: $("#txtGmailEdit").val(),
+                        Phone: $("#txtPhoneEdit").val(),
+                        Gender: $("#txtGenderSelectEdit").val(),
+                    };
+
+                    $.ajax({
+                        url: "/Admin/Student/Update",
+                        method: "post",
+                        dataType: "json",
+                        data: { dto: formData },
+                        success: function (response) {
+                            if (response.isSuccess) {
+                                Swal.fire(
+                                    'Güncelleme İşlemi Başarılı',
+                                    response.message,
+                                    'success'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'Güncelleme İşlemi Başarısız!',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function (error) {
+                            alert("HATA!!")
+                        }
+                    });
+                });
+
+            });
+
+        });//ilk baştakinin
+    </script>
+
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex p-0">
+                <h3 class="card-title p-3"><strong>Öğrenci Yönetimi</strong></h3>
+                <ul class="nav nav-pills ml-auto p-2">
+                    <li class="nav-item"><a class="nav-link active" href="#tab_1" data-toggle="tab">Liste</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tab_2" data-toggle="tab">Yeni Kayıt</a></li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab_1">
+                        <table id="example" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Ad</th>
+                                    <th>Soyad</th>
+                                    <th>Öğrenci Kimliği</th>
+                                    <th>Gmail</th>
+                                    <th>Telefon</th>
+                                    <th>Cinsiyet</th>
+                                    <th>Aktiflik</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.FirstName</td>
+                                        <td>@item.LastName</td>
+                                        <td>@item.SchoolIdentity</td>
+                                        <td>@item.Email</td>
+                                        <td>@item.Phone</td>
+                                        <td>@item.Gender</td>
+                                        <td>
+                                            @if (item.IsActive == true)
+                                            {
+                                                <span>Aktif</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Değil</span>
+                                            }
+                                        </td>
+
+                                        <td>
+                                            <button type="button" class="btn btn-success btnEdit" studentid='@item.Id'>Düzenle</button>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger btnDelete" studentid='@item.Id'>SİL</button>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Ad</th>
+                                    <th>Soyad</th>
+                                    <th>Öğrenci Kimliği</th>
+                                    <th>Gmail</th>
+                                    <th>Telefon</th>
+                                    <th>Cinsiyet</th>
+                                    <th>Aktiflik</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="tab-pane" id="tab_2">
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Yeni Öğrenci Ekleme Formu</h3>
+                            </div>
+                            <form>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Ad</label>
+                                        <input type="text" class="form-control" id="txtFirstName" placeholder="Ad" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1">Soyad</label>
+                                        <input type="text" class="form-control" id="txtLastName" placeholder="Soyad" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1">Öğrenci Kimliği</label>
+                                        <input type="password" class="form-control" id="txtIdentity" placeholder="Öğrenci kimlik numarası" maxlength="10" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1">Gmail</label>
+                                        <input type="text" class="form-control" id="txtGmail" placeholder="Gmail" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1">Telefon</label>
+                                        <input type="text" class="form-control" id="txtPhone" placeholder="Telefon" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="genderSelect">Cinsiyet</label>
+                                        <select class="form-control" id="genderSelect">
+                                            <option value="Erkek">Erkek</option>
+                                            <option value="Kız">Kız</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="activeSelect">Aktiflik</label>
+                                        <select class="form-control" id="activeSelect">
+                                            <option value="true">Aktif</option>
+                                            <option value="false">Değil</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button id="btnSave" type="button" class="btn btn-primary">Kaydet</button>
+                                </div>
+                                <button id="btnClear" type="reset" style="display:none;"></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" data-backdrop="static" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel"><strong>Öğrenci Düzenleme Formu</strong></h1>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" id="hfStudentId" />
+
+                    <div class="card-body">
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Ad</label>
+                            <input type="text" class="form-control" id="txtFirstNameEdit" placeholder="Ad" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Soyad</label>
+                            <input type="text" class="form-control" id="txtLastNameEdit" placeholder="Soyad" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Öğrenci Kimliği</label>
+                            <input type="password" class="form-control" id="txtIdentityEdit" placeholder="Öğrenci kimlik numarası" maxlength="10" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Gmail</label>
+                            <input type="text" class="form-control" id="txtGmailEdit" placeholder="Gmail" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Telefon</label>
+                            <input type="text" class="form-control" id="txtPhoneEdit" placeholder="Telefon" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Cinsiyet</label>
+                            <input type="text" class="form-control" id="txtGenderSelectEdit" placeholder="Cinsiyet" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Aktiflik</label>
+                            <input type="text" class="form-control" id="txtactiveSelectEdit" placeholder="silme işlemi kullanınız" required>
+                        </div>
+
+                    </div>
+
+                    <div class="card-footer">
+                        <button id="btnEdit" type="button" class="btn btn-primary">Güncelle</button>
+                    </div>
+                    <button id="btnClearEdit" type="reset" style="display:none;"></button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
